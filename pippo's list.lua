@@ -1,30 +1,19 @@
--- Pippo's List
-
-local function makeIterator()
-    local index
-
-    return function ( t, _, lastValueReturned )
-        index = ( lastValueReturned and index + 1 ) or 1
-        if index <= #t then return t[ index ] end
-    end
-end
-
+-- ===== Pippo's List =====
 
 --- @class Pip.List
---- @field private __index table
---- @field private __call function
 --- @field private __add function
 --- @field private __tostring function
+--- @field private __sub function
+--- @operator add : Pip.List
+--- @operator sub : Pip.List
 local list = {}
-list.__call = makeIterator()
-list.__index = list
 
 
--- Adding Data
+-- ===== Adding Data =====
 
 --- @param value any
 function list:pushFront( value )
-    table.insert( self, value, 1 )
+    table.insert( self, 1, value )
 end
 
 
@@ -40,18 +29,21 @@ function list:append( value )
 end
 
 
+--- @return Pip.List
 function list:__add( right )
-    if type( right ) == "table" and getmetatable( right ) == list then
+    if type( right ) == "table" and #right ~= 0 then
         for _, item in ipairs( right ) do
             table.insert( self, item )
         end
     else
         table.insert( self, right )
     end
+
+    return self
 end
 
 
--- Deleting Data
+-- ===== Deleting Data =====
 
 --- @param index integer
 function list:swapbackPop( index )
@@ -119,7 +111,21 @@ function list:popRandom()
 end
 
 
--- Reading Data
+--- @return Pip.List
+function list:__sub( right )
+    if type( right ) == "table" and #right ~= 0 then
+        for _, item in ipairs( right ) do
+            self:erase( item )
+        end
+    else
+        self:erase( right )
+    end
+
+    return self
+end
+
+
+-- ===== Reading Data =====
 
 --- @return any
 function list:getFront()
@@ -176,7 +182,8 @@ function list:__tostring()
     return result
 end
 
--- Testing Data
+
+-- ===== Testing Data =====
 
 --- @return any
 function list:min()
@@ -224,7 +231,15 @@ function list:all( func )
 end
 
 
--- Constructors
+-- ===== Constructors =====
+
+function list:shuffle() -- Not really a constructor but idk where else to put it
+    for index = #self, 2, -1 do
+        local random = math.random( index )
+        self[ index ], self[ random ] = self[ random ], self[ index ]
+    end
+end
+
 
 --- @param func fun( value : any ) : any
 --- @return Pip.List
@@ -259,18 +274,29 @@ function list:duplicate()
 end
 
 
---- @return Pip.List
-function _G.makeList( ... )
-    local newList = { ... }
-    return setmetatable( newList, list )
+local function makeIterator()
+    local index
+
+    return function ( t, _, lastValueReturned )
+        index = ( lastValueReturned and index + 1 ) or 1
+        if index <= #t then return t[ index ] end
+    end
 end
 
 
--- Wildcard!
+local function makeMetaTable()
+    return {
+        __sub = list.__sub,
+        __add = list.__add,
+        __index = list,
+        __call = makeIterator(),
+        __tostring = list.__tostring
+    }
+end
 
-function list:shuffle()
-    for index = #self, 2, -1 do
-        local random = math.random( index )
-        self[ index ], self[ random ] = self[ random ], self[ index ]
-    end
+
+--- @return Pip.List
+function _G.makeList( ... )
+    local newList = { ... }
+    return setmetatable( newList, makeMetaTable() )
 end
