@@ -1,5 +1,8 @@
 -- ===== Pippo's List =====
 
+local pip = {}
+
+
 --- @class Pip.List
 --- @field private __add function
 --- @field private __tostring function
@@ -244,7 +247,7 @@ end
 --- @param func fun( value : any ) : any
 --- @return Pip.List
 function list:map( func )
-    local mappedList = makeList()
+    local mappedList = pip.makeList()
 
     for _, item in ipairs( self ) do
         local result = func( item )
@@ -258,7 +261,7 @@ end
 --- @param func fun( value : any ) : boolean
 --- @return Pip.List
 function list:filter( func )
-    local filteredList = makeList()
+    local filteredList = pip.makeList()
 
     for _, item in ipairs( self ) do
         if func( item ) then filteredList:append( item ) end
@@ -270,7 +273,7 @@ end
 
 --- @return Pip.List
 function list:duplicate()
-    return makeList( unpack( self ) )
+    return pip.makeList( unpack( self ) )
 end
 
 
@@ -296,7 +299,10 @@ end
 
 
 --- @return Pip.List
-function _G.makeList( ... )
+function pip.makeList( ... )
     local newList = { ... }
     return setmetatable( newList, makeMetaTable() )
 end
+
+
+return pip
