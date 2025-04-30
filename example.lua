@@ -1,7 +1,7 @@
-require "pippo's list"
+local pip = require "pippo's list"
 
 -- Make a basic list
-local list = makeList( "Hello World", "foo", "pippo" )
+local list = pip.makeList( "Hello World", "foo", "pippo" )
 
 -- Print the list
 print( "Initial list:\n"..tostring( list ).."\n" )
@@ -13,7 +13,7 @@ list:pushFront( "Hi there!" )
 list = list + "gal"
 
 -- You can also add a list to another list, or a standard Lua array
-local listToAdd = makeList( "dragon", "deer" )
+local listToAdd = pip.makeList( "dragon", "deer" )
 list = list + listToAdd
 list = list + { "fox", "opposum" }
 
@@ -55,7 +55,7 @@ list:shuffle() -- Shuffling the remaning elements
 print( "\nResult of shuffle:\n"..tostring( list ) )
 
 -- Swapback erasing
-list = makeList( 1, 2, 3, 4, 5 )
+list = pip.makeList( 1, 2, 3, 4, 5 )
 
 print("\nHere's our list after creation:\n"..tostring( list ) )
 list:swapbackErase( 3 )
@@ -64,7 +64,7 @@ list:swapbackPop( 2 )
 print( "And how how 4 is where 2 used to be:\n"..tostring( list ) )
 
 -- Testing items
-list = makeList( 5, 4, 9, 8 )
+list = pip.makeList( 5, 4, 9, 8 )
 print( "\n"..tostring( list ) )
 print( "Is every element bigger than 3?\n"..tostring( list:all( function( value ) return value > 3 end ) ) )
 print( "Is any element equal to 7?\n"..tostring( list:any( function( value ) return value == 7 end ) ) )
